@@ -12,7 +12,7 @@ import groupId.InputTextListener;
 
 public class CustomFrame {
     
-    enum Direction {
+    enum Direction { 
         toRight,
         toNextLine,
     }

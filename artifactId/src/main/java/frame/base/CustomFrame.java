@@ -1,4 +1,4 @@
-package groupId.frame;
+package frame.base;
 
 import java.awt.*;
 
@@ -8,13 +8,16 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 
-import groupId.InputTextListener;
-
 public class CustomFrame {
     
-    enum Direction { 
+    public enum Direction { 
         toRight,
         toNextLine,
+    }
+
+    @FunctionalInterface
+    public interface InputTextListener {
+        public void action(String value);    
     }
 
     @FunctionalInterface
@@ -37,7 +40,7 @@ public class CustomFrame {
         }
     }
 
-    class TablePanelInfo {
+    public class TablePanelInfo {
         private JPanel panel;
         private GridBagLayout layout;
         private GridBagConstraints con;
@@ -45,7 +48,7 @@ public class CustomFrame {
         private Insert insert;
         private AxisFinc axisController;
 
-        TablePanelInfo(Insets _inset) {
+        public TablePanelInfo(Insets _inset) {
             panel = new JPanel();
             panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
             layout = new GridBagLayout();
@@ -62,17 +65,17 @@ public class CustomFrame {
             panel.setLayout(layout);
         }
 
-        JPanel getPanel() { return panel; }
+        public JPanel getPanel() { return panel; }
         GridBagConstraints getConst() { return con; }
         Axis getAxis() { return axis; }
 
-        void setAxis(Direction dir) { axisController.SetAxis(dir, axis); }
-        void setWeightY(int value) { con.weighty = value; }
-        void setBottomInset(int value) { con.insets.bottom = value; }
-        void setConstraints(int fill, int width, int height, double weightX) { setConstraintsBase(con, fill, axis, width, height, weightX); }
+        public void setAxis(Direction dir) { axisController.SetAxis(dir, axis); }
+        public void setWeightY(int value) { con.weighty = value; }
+        public void setBottomInset(int value) { con.insets.bottom = value; }
+        public void setConstraints(int fill, int width, int height, double weightX) { setConstraintsBase(con, fill, axis, width, height, weightX); }
         
-        void insertItem(Component item) { insert.insert(item); }
-        void removeAllChild() { 
+        public void insertItem(Component item) { insert.insert(item); }
+        public void removeAllChild() { 
             panel.removeAll();
             con.gridx = 0;
             con.gridy = 0;
@@ -108,7 +111,7 @@ public class CustomFrame {
         }
     }
 
-    DocumentListener textinputListener(InputTextListener function) {
+    protected DocumentListener textinputListener(InputTextListener function) {
         return new DocumentListener() {
 
             @Override

@@ -1,4 +1,4 @@
-package groupId.frame;
+package frame.view;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -6,6 +6,10 @@ import java.util.*;
 
 import javax.swing.*;
 import javax.swing.event.*;
+
+import frame.base.CustomFrame;
+import frame.base.FrameItems;
+
 
 
 public class FileSettingFrame extends CustomFrame{

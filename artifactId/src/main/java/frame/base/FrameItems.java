@@ -1,4 +1,4 @@
-package groupId.frame;
+package frame.base;
 
 import java.awt.event.*;
 

@@ -1,4 +1,4 @@
-package groupId.data;
+package data;
 
 /**
  * 메인 옵션 저장용 클래스

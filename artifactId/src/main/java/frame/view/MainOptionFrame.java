@@ -1,17 +1,24 @@
-package groupId.frame;
+package frame.view;
 
 import java.awt.*;
 
 import javax.swing.*;
 
-import groupId.*;
+import controller.JsonController;
+import data.MainOption;
+import frame.base.CustomFrame;
+import frame.base.FrameItems;
+
 
 public class MainOptionFrame extends CustomFrame{
+
+    private String mainOptionPath = "main.json";
 
     public JPanel mainPanel() {
         var insets = new Insets(0, 10, 0, 10);
         var info = new TablePanelInfo(insets);
-        var option = JsonController.readMainOption();
+        var jsonController = new JsonController<MainOption>();
+        var option = jsonController.readMainOption(mainOptionPath);
 
         info.setBottomInset(20);
         info.setConstraints(GridBagConstraints.HORIZONTAL, 2, 1, 1);
@@ -26,7 +33,7 @@ public class MainOptionFrame extends CustomFrame{
         info.setConstraints(GridBagConstraints.HORIZONTAL, 1, 1, 10);
         info.insertItem(FrameItems.textField(option.getMainPath(), textinputListener((value) -> {
             option.setMainPath(value);
-            JsonController.saveMainOption(option);
+            jsonController.saveMainOption(option, mainOptionPath);
         })));
 
         info.setAxis(Direction.toNextLine);
@@ -38,7 +45,7 @@ public class MainOptionFrame extends CustomFrame{
         info.setConstraints(GridBagConstraints.HORIZONTAL, 1, 1, 10);
         info.insertItem(FrameItems.textField(option.getLogHeader(), textinputListener((value) -> {
             option.setLogHeader(value);
-            JsonController.saveMainOption(option);
+            jsonController.saveMainOption(option, mainOptionPath);
         })));
 
         info.setBottomInset(0);

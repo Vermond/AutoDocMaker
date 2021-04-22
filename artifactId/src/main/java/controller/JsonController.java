@@ -1,35 +1,36 @@
-package groupId;
+package controller;
 
 import java.io.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import groupId.data.MainOption;
+public class JsonController<T> {
+    //private static ObjectMapper objectMapper = new ObjectMapper();
 
-public class JsonController {
-    private static ObjectMapper objectMapper = new ObjectMapper();
+    //private static String mainOptionPath = "main.json";
 
-    private static String mainOptionPath = "main.json";
-
-    public static MainOption readMainOption() {
+    public T readMainOption(String filePath) {
         try {
-            File file = new File(mainOptionPath);
-            return objectMapper.readValue(file, MainOption.class);
+            File file = new File(filePath);
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.readValue(file, new TypeReference<T>(){});
         } catch (JsonProcessingException e) {
             System.out.println("JsonProcessingException : " + e.getMessage());
-            return new MainOption();
+            return null;
         } catch (IOException e) {
             System.out.println("IOException : " + e.getMessage());
-            return new MainOption();
+            return null;
         }
     }
 
-    public static void saveMainOption(MainOption option) {
+    public void saveMainOption(T option, String filePath) {
         try {
+            ObjectMapper objectMapper = new ObjectMapper();
             String json = objectMapper.writeValueAsString(option);
 
-            FileWriter writer = new FileWriter(mainOptionPath);
+            FileWriter writer = new FileWriter(filePath);
             writer.write(json);
             writer.flush();
             writer.close();

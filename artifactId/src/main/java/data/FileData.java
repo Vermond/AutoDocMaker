@@ -1,4 +1,4 @@
-package groupId.data;
+package data;
 
 public class FileData {
     public static int FILE_FIXED = 0;
@@ -78,12 +78,12 @@ public class FileData {
         void setHeader(String value) { headerContent = value; }
         void setFooter(String value) { footerContent = value; }
 
-        boolean isSameLine(String a, String b) {
+        private boolean isSameLine(String a, String b) {
             return countLines(a) == countLines(b);
         }
 
         private int countLines(String s) {
-            return (s + " ").split("\r?\n").length;
+            return s.split("\r?\n").length;
         }
     }
 

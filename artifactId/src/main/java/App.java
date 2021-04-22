@@ -1,6 +1,4 @@
-package groupId;
-
-import groupId.frame.MainFrame;
+import frame.view.MainFrame;
 
 /**
  * Hello world!

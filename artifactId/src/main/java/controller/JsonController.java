@@ -3,29 +3,29 @@ package controller;
 import java.io.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class JsonController<T> {
-    //private static ObjectMapper objectMapper = new ObjectMapper();
+import data.MainOption;
 
-    //private static String mainOptionPath = "main.json";
+public class JsonController {
 
-    public T readMainOption(String filePath) {
+    public MainOption readMainOption(String filePath) {
         try {
             File file = new File(filePath);
             ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.readValue(file, new TypeReference<T>(){});
+            return objectMapper.readValue(file, MainOption.class);
         } catch (JsonProcessingException e) {
             System.out.println("JsonProcessingException : " + e.getMessage());
+            e.printStackTrace();
             return null;
         } catch (IOException e) {
             System.out.println("IOException : " + e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
 
-    public void saveMainOption(T option, String filePath) {
+    public void saveMainOption(MainOption option, String filePath) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             String json = objectMapper.writeValueAsString(option);
@@ -36,6 +36,7 @@ public class JsonController<T> {
             writer.close();
         } catch (JsonProcessingException e) {
             System.out.println("JsonProcessingException : " + e.getMessage());
+            e.printStackTrace();
         } catch (IOException e) {
             System.out.println("IOException : " + e.getMessage());
             e.printStackTrace();

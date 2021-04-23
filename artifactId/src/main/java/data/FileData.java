@@ -1,5 +1,7 @@
 package data;
 
+import java.beans.*;
+
 public class FileData {
     public static int FILE_FIXED = 0;
     public static int FILE_GENERATE = 1;
@@ -10,19 +12,32 @@ public class FileData {
     private FixedFileInfo fixedInfo;
     private GenerateFileInfo generateInfo;
 
+    private PropertyChangeSupport support = new PropertyChangeSupport(this);
 
-    String getFileName() { return fileName; }
-    String getFilePath() { return filePath; }
-    int getFileType() { return fileType; }
-    FixedFileInfo getFixedFileInfo() { return fixedInfo; }
-    GenerateFileInfo getGenerateFileInfo() { return generateInfo; }
+    public String getFileName() { return fileName; }
+    public String getFilePath() { return filePath; }
+    public int getFileType() { return fileType; }
+    public FixedFileInfo getFixedFileInfo() { return fixedInfo; }
+    public GenerateFileInfo getGenerateFileInfo() { return generateInfo; }
 
-    void setFileName(String value) { fileName = value; }
-    void setFilePath(String value) { filePath = value; }
-    void setFileType(int value) { fileType = value; }
-    void setFixedFileInfo(FixedFileInfo value) { fixedInfo = value; }
-    void setGenerateFileInfo(GenerateFileInfo value) { generateInfo = value; }
+    public void setFileName(String value) { 
+        var oldValue = fileName;
+        fileName = value;
+        support.firePropertyChange("fileName", oldValue, value);
+    }
+    public void setFilePath(String value) { filePath = value; }
+    public void setFileType(int value) { fileType = value; }
+    public void setFixedFileInfo(FixedFileInfo value) { fixedInfo = value; }
+    public void setGenerateFileInfo(GenerateFileInfo value) { generateInfo = value; }
 
+
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        support.addPropertyChangeListener(listener);
+    }
+    
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        support.removePropertyChangeListener(listener);
+    }
 
     class FixedFileInfo {
         private String content;

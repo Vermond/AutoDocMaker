@@ -5,7 +5,6 @@ import java.awt.*;
 import javax.swing.*;
 
 import controller.JsonController;
-import data.MainOption;
 import frame.base.CustomFrame;
 import frame.base.FrameItems;
 
@@ -17,7 +16,7 @@ public class MainOptionFrame extends CustomFrame{
     public JPanel mainPanel() {
         var insets = new Insets(0, 10, 0, 10);
         var info = new TablePanelInfo(insets);
-        var jsonController = new JsonController<MainOption>();
+        var jsonController = new JsonController();
         var option = jsonController.readMainOption(mainOptionPath);
 
         info.setBottomInset(20);
@@ -30,7 +29,7 @@ public class MainOptionFrame extends CustomFrame{
         info.insertItem(FrameItems.label("기본 경로", SwingConstants.RIGHT));
 
         info.setAxis(Direction.toRight);
-        info.setConstraints(GridBagConstraints.HORIZONTAL, 1, 1, 10);
+        info.setConstraints(GridBagConstraints.HORIZONTAL, 1, 1, 10);        
         info.insertItem(FrameItems.textField(option.getMainPath(), textinputListener((value) -> {
             option.setMainPath(value);
             jsonController.saveMainOption(option, mainOptionPath);

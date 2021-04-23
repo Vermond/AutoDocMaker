@@ -2,6 +2,8 @@ package frame.view;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.*;
 
 import javax.swing.*;
@@ -9,8 +11,7 @@ import javax.swing.event.*;
 
 import frame.base.CustomFrame;
 import frame.base.FrameItems;
-
-
+import data.FileData;
 
 public class FileSettingFrame extends CustomFrame{
     
@@ -18,6 +19,8 @@ public class FileSettingFrame extends CustomFrame{
     private int selectedIndex = -1;
     private ArrayList<String> items = new ArrayList<String>(Arrays.asList("고정 내용 파일", "자동 생성 파일"));
     private int dropdownIndex = 1;
+    private FileData fileData = new FileData();
+    private TestListener testListener = new TestListener("11");
 
     private TablePanelInfo leftPanelInfo;
     private TablePanelInfo rightPanelInfo;
@@ -30,10 +33,11 @@ public class FileSettingFrame extends CustomFrame{
             return "";
         }
     }
-    
 
     public FileSettingFrame() {
         listModel = new DefaultListModel<String>();
+        
+        fileData.addPropertyChangeListener(testListener);
     }
 
     public JPanel mainPanel() {
@@ -45,11 +49,21 @@ public class FileSettingFrame extends CustomFrame{
 
         info.setAxis(Direction.toRight);
         info.setConstraints(GridBagConstraints.HORIZONTAL, 1, 1, 1);
-        info.insertItem(FrameItems.button("전체 항목 내보내기"));
+        info.insertItem(FrameItems.button("전체 항목 내보내기", new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                fileData.setFileName("1");
+            }
+        }));
 
         info.setAxis(Direction.toRight);
         info.setConstraints(GridBagConstraints.HORIZONTAL, 1, 1, 1);
-        info.insertItem(FrameItems.button("전체 항목 문서로 작성"));
+        info.insertItem(FrameItems.button("전체 항목 문서로 작성", new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                fileData.setFileName("2");
+            }
+        }));
 
         info.setWeightY(1);
         info.setAxis(Direction.toNextLine);
@@ -201,9 +215,11 @@ public class FileSettingFrame extends CustomFrame{
 
         info.setAxis(Direction.toRight);
         info.setConstraints(GridBagConstraints.HORIZONTAL, 1, 1, 9);
-        info.insertItem(FrameItems.textField("", textinputListener((value) -> {
+        var item = FrameItems.textField("", textinputListener((value) -> {
             System.out.println("파일명 : " + value);
-        })));
+        }));
+        item.addPropertyChangeListener("test1", new TestListener("22"));
+        info.insertItem(item);
 
         info.setAxis(Direction.toNextLine);
         info.setConstraints(GridBagConstraints.HORIZONTAL, 1, 1, 1);
@@ -359,6 +375,21 @@ public class FileSettingFrame extends CustomFrame{
                 dropdownIndex = items.indexOf(item);
                 reDrawRightArea();
             }
+            
+        }
+    }
+
+
+    class TestListener implements PropertyChangeListener {
+        private String name = "default";
+
+        public TestListener(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+            System.out.println("propertyChange " + name + " | " + evt.getPropertyName() + "  " + evt.getOldValue() + " -> " + evt.getNewValue());
             
         }
     }

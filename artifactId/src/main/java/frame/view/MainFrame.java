@@ -13,10 +13,10 @@ public class MainFrame extends JFrame {
 
     
     public MainFrame(int width, int height) {
-        var main = new MainOptionFrame();
+        var main = new MainOptionFrame(this);
         pane.addTab(Strings.mainTapLabel, main.mainPanel());
 
-        var fileSetting = new FileSettingFrame();
+        var fileSetting = new FileSettingFrame(this);
         pane.addTab(Strings.fileTapLabel, fileSetting.mainPanel());
 
         this.add(pane);

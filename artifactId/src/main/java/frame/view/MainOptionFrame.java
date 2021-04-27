@@ -17,8 +17,10 @@ public class MainOptionFrame extends CustomFrame{
 
     private String _mainPath = "";
     private String _logHeader = "";
+    private JFrame parentFrame;
 
-    public MainOptionFrame() {
+    public MainOptionFrame(JFrame parent) {
+        parentFrame = parent;
         controller.addPropertyChangeListener(new OptionChangeListener());
     }
 
@@ -40,7 +42,7 @@ public class MainOptionFrame extends CustomFrame{
         info.insertItem(FrameItems.textField(controller.getMainPath(), textinputListener((value) -> {
             _mainPath = value;
         }),
-        focusListener(null, () -> {
+        focusListener(()->{}, () -> {
             controller.setMainPath(_mainPath);
         })));
 
@@ -54,19 +56,45 @@ public class MainOptionFrame extends CustomFrame{
         info.insertItem(FrameItems.textField(controller.getLogHeader(), textinputListener((value) -> {
             _logHeader = value;
         }),
-        focusListener(null, () -> {
+        focusListener(()->{}, () -> {
             controller.setLogHeader(_logHeader);
         })));
 
         info.setBottomInset(0);
         info.setAxis(Direction.toNextLine);
         info.setConstraints(GridBagConstraints.HORIZONTAL, 2, 1, 1);
-        info.insertItem(FrameItems.button(Strings.exportOptionButtonLabel));
+        info.insertItem(FrameItems.button(Strings.exportOptionButtonLabel, () -> {
+            //TODO : file dialog sample code-move it
+            FileDialog fd = new FileDialog(parentFrame, "Choose a file", FileDialog.LOAD);
+            fd.setDirectory("C:\\");
+            fd.setFile("*.xml");
+            fd.setVisible(true);
+            String filename = fd.getDirectory();
+            if (filename == null)
+                System.out.println("You cancelled the choice");
+            else
+                System.out.println("You chose " + filename);
+
+        }));
 
         info.setAxis(Direction.toNextLine);
         info.setConstraints(GridBagConstraints.HORIZONTAL, 2, 1, 1);
-        info.insertItem(FrameItems.button(Strings.importOptionButtonLabel));
+        info.insertItem(FrameItems.button(Strings.importOptionButtonLabel, () -> {
+            //TODO : directory dialog sample code-move it
+            JFileChooser chooser = new JFileChooser();
+            chooser.setCurrentDirectory(new java.io.File("."));
+            chooser.setDialogTitle("choosertitle");
+            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            chooser.setAcceptAllFileFilterUsed(false);
+        
+            if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+              System.out.println("getCurrentDirectory(): " + chooser.getCurrentDirectory());
+              System.out.println("getSelectedFile() : " + chooser.getSelectedFile());
+            } else {
+              System.out.println("No Selection ");
+            }
 
+        }));
         info.setWeightY(1);
         info.setAxis(Direction.toNextLine);
         info.setConstraints(GridBagConstraints.NONE, 1, 1, 1);

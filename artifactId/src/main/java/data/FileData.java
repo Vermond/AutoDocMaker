@@ -12,8 +12,18 @@ public class FileData {
     private FixedFileInfo fixedInfo;
     private GenerateFileInfo generateInfo;
 
-    public FileData() {}
-    public FileData(String name) { dataName = name; }
+    public FileData() {
+        // TODO : temp code
+        dataName = Strings.defaultItemName;
+        fixedInfo = new FixedFileInfo();
+        generateInfo = new GenerateFileInfo();
+    }
+    public FileData(String name) {
+        dataName = name; 
+        // TODO : temp code
+        fixedInfo = new FixedFileInfo();
+        generateInfo = new GenerateFileInfo();
+    }
 
     public String getDataName() { return dataName; }
     public String getFileName() { return fileName; }

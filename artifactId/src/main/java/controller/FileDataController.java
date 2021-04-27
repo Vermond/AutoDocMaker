@@ -18,6 +18,8 @@ public class FileDataController implements PropertyChangeInterface{
 
     public FileDataController() {
         dataList = new ArrayList<FileData>();
+        // TODO : temp code
+        dataList.add(new FileData());
     }
 
     @Override

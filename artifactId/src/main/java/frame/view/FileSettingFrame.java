@@ -18,6 +18,8 @@ import controller.FileDataController;
 
 public class FileSettingFrame extends CustomFrame{
     
+    private JFrame parentFrame;
+
     private int selectedIndex = -1;
     private ArrayList<String> items = new ArrayList<String>();
     private int dropdownIndex = 1;
@@ -29,7 +31,8 @@ public class FileSettingFrame extends CustomFrame{
     private TablePanelInfo leftPanelInfo;
     private TablePanelInfo rightPanelInfo;
 
-    public FileSettingFrame() {
+    public FileSettingFrame(JFrame parent) {
+        parentFrame = parent;
         dataNameList = controller.getAllDataName();
         controller.addPropertyChangeListener(new FileSettingChangeListener());
 
@@ -47,18 +50,14 @@ public class FileSettingFrame extends CustomFrame{
 
         info.setAxis(Direction.toRight);
         info.setConstraints(GridBagConstraints.HORIZONTAL, 1, 1, 1);
-        info.insertItem(FrameItems.button(Strings.exportAllButtonLabel, new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e) {
-            }
+        info.insertItem(FrameItems.button(Strings.exportAllButtonLabel, () -> {
+
         }));
 
         info.setAxis(Direction.toRight);
         info.setConstraints(GridBagConstraints.HORIZONTAL, 1, 1, 1);
-        info.insertItem(FrameItems.button(Strings.writeOutAllButtonLabel, new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e) {
-            }
+        info.insertItem(FrameItems.button(Strings.writeOutAllButtonLabel, () -> {
+
         }));
 
         info.setWeightY(1);
@@ -112,36 +111,28 @@ public class FileSettingFrame extends CustomFrame{
         info.setBottomInset(0);
         info.setAxis(Direction.toNextLine);
         info.setConstraints(GridBagConstraints.HORIZONTAL, 1, 1, 1);
-        info.insertItem(FrameItems.button(Strings.addButtonLabel, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String name = Strings.defaultItemName;
+        info.insertItem(FrameItems.button(Strings.addButtonLabel, () -> {
+            String name = Strings.defaultItemName;
 
-                while(dataNameList.contains(name)) {
-                    name = name + "_1";
-                }
-
-                controller.createData(name);
+            while(dataNameList.contains(name)) {
+                name = name + "_1";
             }
+
+            controller.createData(name);
         }));
         info.setAxis(Direction.toRight);
 
         info.setConstraints(GridBagConstraints.HORIZONTAL, 1, 1, 1);
-        info.insertItem(FrameItems.button(Strings.deleteButtonLabel, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                controller.removeCurrentData();        
-            }
+        info.insertItem(FrameItems.button(Strings.deleteButtonLabel, () -> {
+            controller.removeCurrentData();
         }));
         info.setAxis(Direction.toRight);
 
         info.setConstraints(GridBagConstraints.HORIZONTAL, 1, 1, 1);
-        info.insertItem(FrameItems.button(Strings.importButtonLabel, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // TODO : file select dialog needed
-                //controller.importData();
-            }
+        info.insertItem(FrameItems.button(Strings.importButtonLabel, () -> {
+            // TODO : file select dialog needed
+            //controller.importData();
+
         }));
     }
 
@@ -207,7 +198,7 @@ public class FileSettingFrame extends CustomFrame{
         info.setConstraints(GridBagConstraints.HORIZONTAL, 1, 1, 9);
         info.insertItem(FrameItems.textField(controller.getFileName(), textinputListener((value) -> {
         }),
-        focusListener(null, () -> {
+        focusListener(()->{}, () -> {
         })));
 
         info.setAxis(Direction.toNextLine);
@@ -218,7 +209,7 @@ public class FileSettingFrame extends CustomFrame{
         info.setConstraints(GridBagConstraints.HORIZONTAL, 1, 1, 9);
         info.insertItem(FrameItems.textField(controller.getFilePath(), textinputListener((value) -> {
         }),
-        focusListener(null, () -> {
+        focusListener(()->{}, () -> {
         })));
 
         info.setAxis(Direction.toNextLine);
@@ -246,7 +237,7 @@ public class FileSettingFrame extends CustomFrame{
         info.setConstraints(GridBagConstraints.BOTH, 1, 1, 5);
         var field = FrameItems.multiTextField(controller.getContent(), textinputListener((value) -> {
         }),
-        focusListener(null, () -> {
+        focusListener(()->{}, () -> {
         }));
         field.setPreferredSize(new Dimension(1000, 80));
         info.insertItem(field);
@@ -269,7 +260,7 @@ public class FileSettingFrame extends CustomFrame{
         info.setConstraints(GridBagConstraints.BOTH, 2, 1, 8);
         var field = FrameItems.multiTextField(controller.getFilter(), textinputListener((value) -> {
         }),
-        focusListener(null, () -> {
+        focusListener(()->{}, () -> {
         }));
         field.setPreferredSize(new Dimension(1000, 80));
         info.insertItem(field);
@@ -282,7 +273,7 @@ public class FileSettingFrame extends CustomFrame{
         info.setConstraints(GridBagConstraints.BOTH, 2, 1, 8);
         info.insertItem(FrameItems.multiTextField(controller.getFilterOutput(), textinputListener((value) -> {
         }),
-        focusListener(null, () -> {
+        focusListener(()->{}, () -> {
         })));
 
         info.setWeightY(0);
@@ -295,14 +286,14 @@ public class FileSettingFrame extends CustomFrame{
         info.setConstraints(GridBagConstraints.BOTH, 1, 3, 4);
         info.insertItem(FrameItems.multiTextField(controller.getSpecialOption(), textinputListener((value) -> {
         }),
-        focusListener(null, () -> {
+        focusListener(()->{}, () -> {
         })));
 
         info.setAxis(Direction.toRight);
         info.setConstraints(GridBagConstraints.BOTH, 1, 3, 4);
         info.insertItem(FrameItems.multiTextField(controller.getSpecialContent(), textinputListener((value) -> {
         }),
-        focusListener(null, () -> {
+        focusListener(()->{}, () -> {
         })));
 
         info.setBottomInset(0);
@@ -323,7 +314,7 @@ public class FileSettingFrame extends CustomFrame{
         info.setConstraints(GridBagConstraints.BOTH, 2, 1, 8);
         info.insertItem(FrameItems.multiTextField(controller.getHeader(), textinputListener((value) -> {
         }),
-        focusListener(null, () -> {
+        focusListener(()->{}, () -> {
         })));
         info.setAxis(Direction.toNextLine);
         info.setConstraints(GridBagConstraints.BOTH, 1, 1, 1);
@@ -333,7 +324,7 @@ public class FileSettingFrame extends CustomFrame{
         info.setConstraints(GridBagConstraints.BOTH, 2, 1, 8);
         info.insertItem(FrameItems.multiTextField(controller.getFooter(), textinputListener((value) -> {
         }),
-        focusListener(null, () -> {
+        focusListener(()->{}, () -> {
         })));
 
         return info.getPanel();

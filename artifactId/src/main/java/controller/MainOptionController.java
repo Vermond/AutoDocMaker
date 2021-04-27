@@ -10,7 +10,12 @@ public class MainOptionController implements PropertyChangeInterface {
     private MainOption option;
     private PropertyChangeSupport support = new PropertyChangeSupport(this);
 
-    public MainOptionController() {}
+    public MainOptionController() {
+        // TODO : temp code
+        option = new MainOption();
+        option.setLogHeader("");
+        option.setMainPath("");
+    }
 
     @Override
     public void addPropertyChangeListener(PropertyChangeListener listener) {

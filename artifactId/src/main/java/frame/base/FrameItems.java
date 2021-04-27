@@ -7,12 +7,22 @@ import javax.swing.event.DocumentListener;
 
 import listener.InputFocusListener;
 
-public class FrameItems {    
+public class FrameItems {
 
-    public static JButton button(String title, ActionListener listener) {
+    @FunctionalInterface
+    public interface ClickAction {
+        public void action();    
+    }
+
+    public static JButton button(String title, ClickAction action) {
         var btn = new JButton(title);
 
-        btn.addActionListener(listener);
+        btn.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                action.action();                
+            }
+        });
 
         return btn;
     }

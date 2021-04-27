@@ -12,33 +12,30 @@ import javax.swing.event.*;
 import frame.base.CustomFrame;
 import frame.base.FrameItems;
 import data.FileData;
+import data.FileType;
 import data.Strings;
+import controller.FileDataController;
 
 public class FileSettingFrame extends CustomFrame{
     
-    private DefaultListModel<String> listModel;
     private int selectedIndex = -1;
-    private ArrayList<String> items = new ArrayList<String>(Arrays.asList(Strings.fileTypeFixed, Strings.fileTypeAuto));
+    private ArrayList<String> items = new ArrayList<String>();
     private int dropdownIndex = 1;
-    private FileData fileData = new FileData();
-    private TestListener testListener = new TestListener("11");
+    private DefaultListModel<String> dataNameList;
+
+    //Do not modify it directly
+    private FileDataController controller = new FileDataController();    
 
     private TablePanelInfo leftPanelInfo;
     private TablePanelInfo rightPanelInfo;
 
-    public int getIndex() { return selectedIndex; }
-    public String getName() { 
-        try {
-            return listModel.get(selectedIndex); 
-        } catch (Exception e) {
-            return "";
-        }
-    }
-
     public FileSettingFrame() {
-        //listModel = new DefaultListModel<String>();
-        
-        //fileData.addPropertyChangeListener(testListener);
+        dataNameList = controller.getAllDataName();
+        controller.addPropertyChangeListener(new FileSettingChangeListener());
+
+        // TODO : change to nice way if available
+        items.add(Strings.fileTypeFixed);
+        items.add(Strings.fileTypeAuto);
     }
 
     public JPanel mainPanel() {
@@ -53,7 +50,6 @@ public class FileSettingFrame extends CustomFrame{
         info.insertItem(FrameItems.button(Strings.exportAllButtonLabel, new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                fileData.setFileName("1");
             }
         }));
 
@@ -62,7 +58,6 @@ public class FileSettingFrame extends CustomFrame{
         info.insertItem(FrameItems.button(Strings.writeOutAllButtonLabel, new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                fileData.setFileName("2");
             }
         }));
 
@@ -90,7 +85,7 @@ public class FileSettingFrame extends CustomFrame{
     }
 
     void addLeftPanelItems(TablePanelInfo info) {
-        var list = new JList<String>(listModel);
+        var list = new JList<String>(dataNameList);
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         list.setLayoutOrientation(JList.VERTICAL);
         
@@ -100,9 +95,7 @@ public class FileSettingFrame extends CustomFrame{
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 selectedIndex = e.getFirstIndex();
-
-                reDrawLeftArea();
-                reDrawRightArea();
+                controller.setCurrentDataIndex(selectedIndex);
             }            
         });
 
@@ -124,15 +117,11 @@ public class FileSettingFrame extends CustomFrame{
             public void actionPerformed(ActionEvent e) {
                 String name = Strings.defaultItemName;
 
-                while(listModel.contains(name)) {
+                while(dataNameList.contains(name)) {
                     name = name + "_1";
                 }
 
-                listModel.addElement(name);
-                selectedIndex = listModel.indexOf(name);
-
-                reDrawLeftArea();
-                reDrawRightArea();           
+                controller.createData(name);
             }
         }));
         info.setAxis(Direction.toRight);
@@ -141,19 +130,19 @@ public class FileSettingFrame extends CustomFrame{
         info.insertItem(FrameItems.button(Strings.deleteButtonLabel, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
-                listModel.remove(selectedIndex);
-
-                selectedIndex = listModel.getSize()-1;
-
-                reDrawLeftArea();
-                reDrawRightArea();           
+                controller.removeCurrentData();        
             }
         }));
         info.setAxis(Direction.toRight);
 
         info.setConstraints(GridBagConstraints.HORIZONTAL, 1, 1, 1);
-        info.insertItem(FrameItems.button(Strings.importButtonLabel));
+        info.insertItem(FrameItems.button(Strings.importButtonLabel, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // TODO : file select dialog needed
+                //controller.importData();
+            }
+        }));
     }
 
     JPanel rightPanel() {
@@ -186,10 +175,10 @@ public class FileSettingFrame extends CustomFrame{
         info.setWeightY(1);
         info.setConstraints(GridBagConstraints.BOTH, 1, 1, 1);
         switch (dropdownIndex) {
-            case 0:
+            case FileData.FILE_FIXED:
             info.insertItem(fixedFileInputArea());
             break;
-            case 1:
+            case FileData.FILE_GENERATE:
             info.insertItem(unFixedFileInputArea());
             break;
         }
@@ -216,8 +205,9 @@ public class FileSettingFrame extends CustomFrame{
 
         info.setAxis(Direction.toRight);
         info.setConstraints(GridBagConstraints.HORIZONTAL, 1, 1, 9);
-        info.insertItem(FrameItems.textField("", textinputListener((value) -> {
-            System.out.println("파일명 : " + value);
+        info.insertItem(FrameItems.textField(controller.getFileName(), textinputListener((value) -> {
+        }),
+        focusListener(null, () -> {
         })));
 
         info.setAxis(Direction.toNextLine);
@@ -226,8 +216,9 @@ public class FileSettingFrame extends CustomFrame{
 
         info.setAxis(Direction.toRight);
         info.setConstraints(GridBagConstraints.HORIZONTAL, 1, 1, 9);
-        info.insertItem(FrameItems.textField("", textinputListener((value) -> {
-            System.out.println("경로 : " + value);
+        info.insertItem(FrameItems.textField(controller.getFilePath(), textinputListener((value) -> {
+        }),
+        focusListener(null, () -> {
         })));
 
         info.setAxis(Direction.toNextLine);
@@ -253,8 +244,9 @@ public class FileSettingFrame extends CustomFrame{
         info.setWeightY(1);
         info.setAxis(Direction.toRight);
         info.setConstraints(GridBagConstraints.BOTH, 1, 1, 5);
-        var field = FrameItems.multiTextField("", textinputListener((value) -> {
-            System.out.println("내용 : " + value);
+        var field = FrameItems.multiTextField(controller.getContent(), textinputListener((value) -> {
+        }),
+        focusListener(null, () -> {
         }));
         field.setPreferredSize(new Dimension(1000, 80));
         info.insertItem(field);
@@ -275,8 +267,9 @@ public class FileSettingFrame extends CustomFrame{
         info.setBottomInset(20);
         info.setAxis(Direction.toRight);
         info.setConstraints(GridBagConstraints.BOTH, 2, 1, 8);
-        var field = FrameItems.multiTextField("", textinputListener((value) -> {
-            System.out.println("필터링 조건 : " + value);
+        var field = FrameItems.multiTextField(controller.getFilter(), textinputListener((value) -> {
+        }),
+        focusListener(null, () -> {
         }));
         field.setPreferredSize(new Dimension(1000, 80));
         info.insertItem(field);
@@ -287,8 +280,9 @@ public class FileSettingFrame extends CustomFrame{
 
         info.setAxis(Direction.toRight);
         info.setConstraints(GridBagConstraints.BOTH, 2, 1, 8);
-        info.insertItem(FrameItems.multiTextField("", textinputListener((value) -> {
-            System.out.println("필터링 출력 방식 : " + value);
+        info.insertItem(FrameItems.multiTextField(controller.getFilterOutput(), textinputListener((value) -> {
+        }),
+        focusListener(null, () -> {
         })));
 
         info.setWeightY(0);
@@ -299,14 +293,16 @@ public class FileSettingFrame extends CustomFrame{
         info.setWeightY(1);
         info.setAxis(Direction.toRight);
         info.setConstraints(GridBagConstraints.BOTH, 1, 3, 4);
-        info.insertItem(FrameItems.multiTextField("", textinputListener((value) -> {
-            System.out.println("설명 조건 : " + value);
+        info.insertItem(FrameItems.multiTextField(controller.getSpecialOption(), textinputListener((value) -> {
+        }),
+        focusListener(null, () -> {
         })));
 
         info.setAxis(Direction.toRight);
         info.setConstraints(GridBagConstraints.BOTH, 1, 3, 4);
-        info.insertItem(FrameItems.multiTextField("", textinputListener((value) -> {
-            System.out.println("설명 내용: " + value);
+        info.insertItem(FrameItems.multiTextField(controller.getSpecialContent(), textinputListener((value) -> {
+        }),
+        focusListener(null, () -> {
         })));
 
         info.setBottomInset(0);
@@ -325,18 +321,19 @@ public class FileSettingFrame extends CustomFrame{
 
         info.setAxis(Direction.toRight);
         info.setConstraints(GridBagConstraints.BOTH, 2, 1, 8);
-        info.insertItem(FrameItems.multiTextField("", textinputListener((value) -> {
-            System.out.println("고정 시작 내용 : " + value);
+        info.insertItem(FrameItems.multiTextField(controller.getHeader(), textinputListener((value) -> {
+        }),
+        focusListener(null, () -> {
         })));
-
         info.setAxis(Direction.toNextLine);
         info.setConstraints(GridBagConstraints.BOTH, 1, 1, 1);
         info.insertItem(FrameItems.label(Strings.prefixEndLabel, SwingConstants.RIGHT));
 
         info.setAxis(Direction.toRight);
         info.setConstraints(GridBagConstraints.BOTH, 2, 1, 8);
-        info.insertItem(FrameItems.multiTextField("", textinputListener((value) -> {
-            System.out.println("고정 끝 내용 : " + value);
+        info.insertItem(FrameItems.multiTextField(controller.getFooter(), textinputListener((value) -> {
+        }),
+        focusListener(null, () -> {
         })));
 
         return info.getPanel();
@@ -370,24 +367,43 @@ public class FileSettingFrame extends CustomFrame{
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 var item = e.getItem();
                 dropdownIndex = items.indexOf(item);
-                reDrawRightArea();
-            }
-            
+                controller.setFileType(FileType.fromInt(selectedIndex));
+            }            
         }
     }
 
-
-    class TestListener implements PropertyChangeListener {
-        private String name = "default";
-
-        public TestListener(String name) {
-            this.name = name;
-        }
-
+    class FileSettingChangeListener implements PropertyChangeListener {
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
-            System.out.println("propertyChange " + name + " | " + evt.getPropertyName() + "  " + evt.getOldValue() + " -> " + evt.getNewValue());
-            
+            switch(evt.getPropertyName()) {
+                case Strings.createDataVar:
+                case Strings.deleteDataVar:
+                case Strings.importDataVar:
+                dataNameList = controller.getAllDataName();
+                selectedIndex = controller.getCurrentDataIndex();
+                reDrawLeftArea();
+                reDrawRightArea();
+                break;
+                case Strings.dataIndexVar:
+                reDrawLeftArea();
+                reDrawRightArea();
+                break;
+                case Strings.fileTypeVar:
+                reDrawRightArea();
+                break;
+                case Strings.fileNameVar:
+                case Strings.filePathVar:
+                case Strings.contentVar:
+                case Strings.filterRuleVar:
+                case Strings.filterOutputVar:
+                case Strings.specialDescVar:
+                case Strings.prefixHeaderVar:
+                case Strings.prefixEndVar:
+                //Do nothing
+                break;
+                default:
+                break;
+            }            
         }
     }
 }

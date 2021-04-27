@@ -11,7 +11,9 @@ public class Strings {
 
     static public final String defaultSettingTitle = "기본 설정";
     static public final String defaultPathLabel = "기본 경로";
-    static public final String defaultPrefixLabel = "로그 헤더 prefix";
+    static public final String defaultPathVar = "defaultPath";
+    static public final String defaultLogPrefixLabel = "로그 prefix";
+    static public final String defaultLogPrefixVar = "defaultLogPrefix";
     static public final String exportOptionButtonLabel = "설정 내보내기";
     static public final String importOptionButtonLabel = "설정 가져오기";
 
@@ -24,11 +26,17 @@ public class Strings {
     static public final String exportAllButtonLabel = "전체 항목 내보내기";
     static public final String writeOutAllButtonLabel = "전체 항목 문서로 작성";
 
+    static public final String createDataVar = "createData";
+    static public final String deleteDataVar = "deleteData";
+    static public final String importDataVar = "importData";
+
     static public final String addButtonLabel = "추가";
     static public final String deleteButtonLabel = "삭제";
     static public final String importButtonLabel = "가져오기";
 
     static public final String defaultItemName = "NoName";
+    static public final String dataNameVar = "dataName";
+    static public final String dataIndexVar = "data";
 
     static public final String exportButtonLabel = "현재 항목 내보내기";
     static public final String writeButtonLabel = "현재 항목 문서로 작성";

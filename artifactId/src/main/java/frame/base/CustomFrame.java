@@ -8,6 +8,9 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 
+import listener.InputFocusListener;
+import listener.InputFocusListener.FocusAction;
+
 public class CustomFrame {
     
     public enum Direction { 
@@ -109,6 +112,10 @@ public class CustomFrame {
             axis.y +=1;
             break;
         }
+    }
+
+    protected InputFocusListener focusListener(FocusAction onGained, FocusAction onLost) {
+        return new InputFocusListener(onGained, onLost);
     }
 
     protected DocumentListener textinputListener(InputTextListener function) {

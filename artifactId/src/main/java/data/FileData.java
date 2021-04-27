@@ -1,8 +1,10 @@
 package data;
 
 public class FileData {
-    public static int FILE_FIXED = 0;
-    public static int FILE_GENERATE = 1;
+    public static final int FILE_FIXED = 0;
+    public static final int FILE_GENERATE = 1;
+    
+    private String dataName;
 
     private String fileName;
     private String filePath;
@@ -10,15 +12,20 @@ public class FileData {
     private FixedFileInfo fixedInfo;
     private GenerateFileInfo generateInfo;
 
+    public FileData() {}
+    public FileData(String name) { dataName = name; }
+
+    public String getDataName() { return dataName; }
     public String getFileName() { return fileName; }
     public String getFilePath() { return filePath; }
-    public int getFileType() { return fileType; }
+    public FileType getFileType() { return FileType.fromInt(fileType); }
     public FixedFileInfo getFixedFileInfo() { return fixedInfo; }
     public GenerateFileInfo getGenerateFileInfo() { return generateInfo; }
 
+    public void setDataName(String value) { dataName = value; }
     public void setFileName(String value) { fileName = value; }
     public void setFilePath(String value) { filePath = value; }
-    public void setFileType(int value) { fileType = value; }
+    public void setFileType(FileType value) { fileType = value.toInt(); }
     public void setFixedFileInfo(FixedFileInfo value) { fixedInfo = value; }
     public void setGenerateFileInfo(GenerateFileInfo value) { generateInfo = value; }
 }

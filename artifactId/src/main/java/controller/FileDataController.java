@@ -4,14 +4,13 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 
-import data.FileData;
-import data.FixedFileInfo;
-import data.GenerateFileInfo;
-import data.Strings;
+import javax.swing.DefaultListModel;
+
+import data.*;
 
 //I feel this way of implementation is a little old because of too much code which is similar
 //But I will keep this now. Finding another way is not a good way rigth now and it will takes some long time.
-public class FileDataController {
+public class FileDataController implements PropertyChangeInterface{
     private ArrayList<FileData> dataList;
     private int currentIndex = 0;
 
@@ -21,44 +20,66 @@ public class FileDataController {
         dataList = new ArrayList<FileData>();
     }
 
+    @Override
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         support.addPropertyChangeListener(listener);
     }
     
+    @Override
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         support.removePropertyChangeListener(listener);
     }
 
-    public FileData getCurrentData() {
-        return dataList.get(currentIndex);
-    }
-
-    public void setCurrentData(int index) {
+    public FileData getCurrentData() { return dataList.get(currentIndex); }
+    public int getCurrentDataIndex() { return currentIndex; }
+    public void setCurrentDataIndex(int index) {
+        var oldValue = getCurrentDataIndex();
         currentIndex = index;
+        support.firePropertyChange(Strings.dataIndexVar, oldValue, index);
     }
 
-    public void addData() {
-        dataList.add(new FileData());
+    public void createData(String name) {
+        var data = new FileData(name);
+        dataList.add(data);
         currentIndex = dataList.size() - 1;
+        support.firePropertyChange(Strings.createDataVar, null, data);
     }
 
-    public void addData(String dataPath) {
-        dataList.add(JsonController.readFileData(dataPath));
+    public void importData(String dataPath) {
+        var data = JsonController.readFileData(dataPath);
+        dataList.add(data);
         currentIndex = dataList.size() - 1;
+        support.firePropertyChange(Strings.importDataVar, null, data);
     }
 
     public void removeCurrentData() {
+        var data = getCurrentData();
         dataList.remove(currentIndex);
         currentIndex = currentIndex == 0 ? 0 : currentIndex - 1;
+        support.firePropertyChange(Strings.deleteDataVar, data, null);
     }
 
+    public DefaultListModel<String> getAllDataName() {
+        DefaultListModel<String> result = new DefaultListModel<String>();
 
+        for (FileData data : dataList) {
+            result.addElement(data.getDataName());
+        }
+        return result;
+    }
+
+    public String getDataName() { return getCurrentData().getDataName(); }
     public String getFileName() { return getCurrentData().getFileName(); }
     public String getFilePath() { return getCurrentData().getFilePath(); }
-    public int getFileType() { return getCurrentData().getFileType(); }
+    public FileType getFileType() { return getCurrentData().getFileType(); }
     public FixedFileInfo getFixedFileInfo() { return getCurrentData().getFixedFileInfo(); }
     public GenerateFileInfo getGenerateFileInfo() { return getCurrentData().getGenerateFileInfo(); }
 
+    public void setDataName(String value) {
+        var oldValue = getDataName();
+        getCurrentData().setDataName(value);
+        support.firePropertyChange(Strings.dataNameVar, oldValue, value);
+    }
     public void setFileName(String value) {
         var oldValue = getFileName();
         getCurrentData().setFileName(value);
@@ -69,7 +90,7 @@ public class FileDataController {
         getCurrentData().setFilePath(value);
         support.firePropertyChange(Strings.filePathVar, oldValue, value);
     }
-    public void setFileType(int value) {
+    public void setFileType(FileType value) {
         var oldValue = getFileType();
         getCurrentData().setFileType(value);
         support.firePropertyChange(Strings.fileTypeVar, oldValue, value);

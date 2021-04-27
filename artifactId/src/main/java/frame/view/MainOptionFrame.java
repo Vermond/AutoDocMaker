@@ -1,21 +1,30 @@
 package frame.view;
 
 import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.*;
 
-import controller.JsonController;
+import controller.MainOptionController;
 import data.Strings;
 import frame.base.CustomFrame;
 import frame.base.FrameItems;
 
-
 public class MainOptionFrame extends CustomFrame{
+
+    private MainOptionController controller = new MainOptionController();
+
+    private String _mainPath = "";
+    private String _logHeader = "";
+
+    public MainOptionFrame() {
+        controller.addPropertyChangeListener(new OptionChangeListener());
+    }
 
     public JPanel mainPanel() {
         var insets = new Insets(0, 10, 0, 10);
         var info = new TablePanelInfo(insets);
-        var option = JsonController.readMainOption(Strings.defaultMainOptionPath);
 
         info.setBottomInset(20);
         info.setConstraints(GridBagConstraints.HORIZONTAL, 2, 1, 1);
@@ -28,21 +37,25 @@ public class MainOptionFrame extends CustomFrame{
 
         info.setAxis(Direction.toRight);
         info.setConstraints(GridBagConstraints.HORIZONTAL, 1, 1, 10);        
-        info.insertItem(FrameItems.textField(option.getMainPath(), textinputListener((value) -> {
-            option.setMainPath(value);
-            JsonController.writeMainOption(option, Strings.defaultMainOptionPath);
+        info.insertItem(FrameItems.textField(controller.getMainPath(), textinputListener((value) -> {
+            _mainPath = value;
+        }),
+        focusListener(null, () -> {
+            controller.setMainPath(_mainPath);
         })));
 
         info.setAxis(Direction.toNextLine);
         info.setConstraints(GridBagConstraints.NONE, 1, 1, 1);    
-        info.insertItem(FrameItems.label(Strings.defaultPrefixLabel, SwingConstants.RIGHT));
+        info.insertItem(FrameItems.label(Strings.defaultLogPrefixLabel, SwingConstants.RIGHT));
         
         info.setBottomInset(20);
         info.setAxis(Direction.toRight);
         info.setConstraints(GridBagConstraints.HORIZONTAL, 1, 1, 10);
-        info.insertItem(FrameItems.textField(option.getLogHeader(), textinputListener((value) -> {
-            option.setLogHeader(value);
-            JsonController.writeMainOption(option, Strings.defaultMainOptionPath);
+        info.insertItem(FrameItems.textField(controller.getLogHeader(), textinputListener((value) -> {
+            _logHeader = value;
+        }),
+        focusListener(null, () -> {
+            controller.setLogHeader(_logHeader);
         })));
 
         info.setBottomInset(0);
@@ -62,5 +75,18 @@ public class MainOptionFrame extends CustomFrame{
         return info.getPanel();
     }
 
+    class OptionChangeListener implements PropertyChangeListener {
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+            switch(evt.getPropertyName()) {
+                case Strings.defaultPathVar:
+                case Strings.defaultLogPrefixVar:
+                controller.saveOption(Strings.defaultMainOptionPath);
+                break;
+                default:
+                break;
+            }            
+        }
+    }
     
 }

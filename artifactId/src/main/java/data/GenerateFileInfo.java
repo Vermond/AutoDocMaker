@@ -53,7 +53,7 @@ public class GenerateFileInfo {
         return countLines(a) == countLines(b);
     }
 
-    private int countLines(String s) {
-        return s.split("\r?\n").length;
+    private long countLines(String s) {
+        return s.chars().filter(ch -> ch == '\n').count();
     }
 }

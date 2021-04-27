@@ -5,6 +5,8 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.DocumentListener;
 
+import listener.InputFocusListener;
+
 public class FrameItems {    
 
     public static JButton button(String title, ActionListener listener) {
@@ -29,25 +31,26 @@ public class FrameItems {
         return label;        
     }
 
-    public static JTextField textField(String inputDefault, DocumentListener listener) {
+    public static JTextField textField(String inputDefault, DocumentListener documentListener, InputFocusListener focusListener) {
         JTextField input = new JTextField(inputDefault);
-        input.getDocument().addDocumentListener(listener);
+        input.getDocument().addDocumentListener(documentListener);
+        input.addFocusListener(focusListener);
 
         return input;
     }
 
-    public static JScrollPane multiTextField(String inputDefault, DocumentListener listener) {
+    public static JScrollPane multiTextField(String inputDefault, DocumentListener documentListener, InputFocusListener focusListener) {
         JTextArea input = new JTextArea(inputDefault);
         input.setLineWrap(true);
-        input.getDocument().addDocumentListener(listener);
+        input.getDocument().addDocumentListener(documentListener);
+        input.addFocusListener(focusListener);
 
         var scroll = new JScrollPane(input);
 
         return scroll;
     }
-
-
-public static JComboBox<String> comboBox(String[] items, int index, ItemListener event) {
+    
+    public static JComboBox<String> comboBox(String[] items, int index, ItemListener event) {
         var dropdown = new JComboBox<String>(items);
 
         dropdown.setSelectedIndex(index);

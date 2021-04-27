@@ -12,12 +12,13 @@ import javax.swing.event.*;
 import frame.base.CustomFrame;
 import frame.base.FrameItems;
 import data.FileData;
+import data.Strings;
 
 public class FileSettingFrame extends CustomFrame{
     
     private DefaultListModel<String> listModel;
     private int selectedIndex = -1;
-    private ArrayList<String> items = new ArrayList<String>(Arrays.asList("고정 내용 파일", "자동 생성 파일"));
+    private ArrayList<String> items = new ArrayList<String>(Arrays.asList(Strings.fileTypeFixed, Strings.fileTypeAuto));
     private int dropdownIndex = 1;
     private FileData fileData = new FileData();
     private TestListener testListener = new TestListener("11");
@@ -35,9 +36,9 @@ public class FileSettingFrame extends CustomFrame{
     }
 
     public FileSettingFrame() {
-        listModel = new DefaultListModel<String>();
+        //listModel = new DefaultListModel<String>();
         
-        fileData.addPropertyChangeListener(testListener);
+        //fileData.addPropertyChangeListener(testListener);
     }
 
     public JPanel mainPanel() {
@@ -45,11 +46,11 @@ public class FileSettingFrame extends CustomFrame{
         var info = new TablePanelInfo(insets);
 
         info.setConstraints(GridBagConstraints.HORIZONTAL, 1, 1, 1);
-        info.insertItem(FrameItems.label("파일 설정", SwingConstants.CENTER));
+        info.insertItem(FrameItems.label(Strings.fileListTitle, SwingConstants.CENTER));
 
         info.setAxis(Direction.toRight);
         info.setConstraints(GridBagConstraints.HORIZONTAL, 1, 1, 1);
-        info.insertItem(FrameItems.button("전체 항목 내보내기", new ActionListener(){
+        info.insertItem(FrameItems.button(Strings.exportAllButtonLabel, new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
                 fileData.setFileName("1");
@@ -58,7 +59,7 @@ public class FileSettingFrame extends CustomFrame{
 
         info.setAxis(Direction.toRight);
         info.setConstraints(GridBagConstraints.HORIZONTAL, 1, 1, 1);
-        info.insertItem(FrameItems.button("전체 항목 문서로 작성", new ActionListener(){
+        info.insertItem(FrameItems.button(Strings.writeOutAllButtonLabel, new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
                 fileData.setFileName("2");
@@ -118,10 +119,10 @@ public class FileSettingFrame extends CustomFrame{
         info.setBottomInset(0);
         info.setAxis(Direction.toNextLine);
         info.setConstraints(GridBagConstraints.HORIZONTAL, 1, 1, 1);
-        info.insertItem(FrameItems.button("추가", new ActionListener() {
+        info.insertItem(FrameItems.button(Strings.addButtonLabel, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String name = "NoName";
+                String name = Strings.defaultItemName;
 
                 while(listModel.contains(name)) {
                     name = name + "_1";
@@ -137,7 +138,7 @@ public class FileSettingFrame extends CustomFrame{
         info.setAxis(Direction.toRight);
 
         info.setConstraints(GridBagConstraints.HORIZONTAL, 1, 1, 1);
-        info.insertItem(FrameItems.button("삭제", new ActionListener() {
+        info.insertItem(FrameItems.button(Strings.deleteButtonLabel, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
@@ -152,7 +153,7 @@ public class FileSettingFrame extends CustomFrame{
         info.setAxis(Direction.toRight);
 
         info.setConstraints(GridBagConstraints.HORIZONTAL, 1, 1, 1);
-        info.insertItem(FrameItems.button("가져오기"));
+        info.insertItem(FrameItems.button(Strings.importButtonLabel));
     }
 
     JPanel rightPanel() {
@@ -201,29 +202,27 @@ public class FileSettingFrame extends CustomFrame{
         var info = new TablePanelInfo(insets);
 
         info.setConstraints(GridBagConstraints.BOTH, 2, 1, 1);
-        info.insertItem(FrameItems.button("현재 항목 내보내기"));
+        info.insertItem(FrameItems.button(Strings.exportButtonLabel));
 
         info.setBottomInset(20);
         info.setAxis(Direction.toNextLine);
         info.setConstraints(GridBagConstraints.BOTH, 2, 1, 1);
-        info.insertItem(FrameItems.button("현재 항목 문서로 작성"));
+        info.insertItem(FrameItems.button(Strings.writeButtonLabel));
 
         info.setBottomInset(0);
         info.setAxis(Direction.toNextLine);
         info.setConstraints(GridBagConstraints.HORIZONTAL, 1, 1, 1);
-        info.insertItem(FrameItems.label("파일명", SwingConstants.RIGHT));
+        info.insertItem(FrameItems.label(Strings.fileNameLabel, SwingConstants.RIGHT));
 
         info.setAxis(Direction.toRight);
         info.setConstraints(GridBagConstraints.HORIZONTAL, 1, 1, 9);
-        var item = FrameItems.textField("", textinputListener((value) -> {
+        info.insertItem(FrameItems.textField("", textinputListener((value) -> {
             System.out.println("파일명 : " + value);
-        }));
-        item.addPropertyChangeListener("test1", new TestListener("22"));
-        info.insertItem(item);
+        })));
 
         info.setAxis(Direction.toNextLine);
         info.setConstraints(GridBagConstraints.HORIZONTAL, 1, 1, 1);
-        info.insertItem(FrameItems.label("파일 출력 경로", SwingConstants.RIGHT));
+        info.insertItem(FrameItems.label(Strings.filePathLabel, SwingConstants.RIGHT));
 
         info.setAxis(Direction.toRight);
         info.setConstraints(GridBagConstraints.HORIZONTAL, 1, 1, 9);
@@ -233,7 +232,7 @@ public class FileSettingFrame extends CustomFrame{
 
         info.setAxis(Direction.toNextLine);
         info.setConstraints(GridBagConstraints.HORIZONTAL, 1, 1, 1);
-        info.insertItem(FrameItems.label("종류", SwingConstants.RIGHT));
+        info.insertItem(FrameItems.label(Strings.fileTypeLabel, SwingConstants.RIGHT));
 
         info.setAxis(Direction.toRight);
         info.setConstraints(GridBagConstraints.HORIZONTAL, 1, 1, 9);
@@ -247,7 +246,7 @@ public class FileSettingFrame extends CustomFrame{
         var info = new TablePanelInfo(insets);
 
         info.setConstraints(GridBagConstraints.BOTH, 1, 1, 1);
-        var label = FrameItems.label("내용", SwingConstants.RIGHT);
+        var label = FrameItems.label(Strings.contentLabel, SwingConstants.RIGHT);
         label.setPreferredSize(new Dimension(100, 80));
         info.insertItem(label);
 
@@ -269,7 +268,7 @@ public class FileSettingFrame extends CustomFrame{
 
         info.setWeightY(1);
         info.setConstraints(GridBagConstraints.BOTH, 1, 1, 1);
-        var label = FrameItems.label("필터링 조건", SwingConstants.RIGHT);
+        var label = FrameItems.label(Strings.filterRuleLabel, SwingConstants.RIGHT);
         label.setPreferredSize(new Dimension(50, 50));
         info.insertItem(label);
 
@@ -284,7 +283,7 @@ public class FileSettingFrame extends CustomFrame{
 
         info.setAxis(Direction.toNextLine);
         info.setConstraints(GridBagConstraints.BOTH, 1, 1, 1);
-        info.insertItem(FrameItems.label("필터링 출력 방식", SwingConstants.RIGHT));
+        info.insertItem(FrameItems.label(Strings.filterOutputLabel, SwingConstants.RIGHT));
 
         info.setAxis(Direction.toRight);
         info.setConstraints(GridBagConstraints.BOTH, 2, 1, 8);
@@ -295,7 +294,7 @@ public class FileSettingFrame extends CustomFrame{
         info.setWeightY(0);
         info.setAxis(Direction.toNextLine);
         info.setConstraints(GridBagConstraints.BOTH, 1, 1, 1);
-        info.insertItem(FrameItems.label("특정 조건 설명 추가", SwingConstants.RIGHT));
+        info.insertItem(FrameItems.label(Strings.specialDescLabel, SwingConstants.RIGHT));
 
         info.setWeightY(1);
         info.setAxis(Direction.toRight);
@@ -314,17 +313,15 @@ public class FileSettingFrame extends CustomFrame{
         info.setWeightY(0);
         info.setAxis(Direction.toNextLine);
         info.setConstraints(GridBagConstraints.HORIZONTAL, 1, 1, 1);
-        info.insertItem(FrameItems.label("줄 개수", SwingConstants.RIGHT));
+        info.insertItem(FrameItems.label(Strings.specialDescHintLabel, SwingConstants.RIGHT));
 
         info.setAxis(Direction.toNextLine);
-        info.setConstraints(GridBagConstraints.HORIZONTAL, 1, 1, 1);
-        info.insertItem(FrameItems.label("똑같아야됨", SwingConstants.RIGHT));
 
         info.setWeightY(1);
         info.setBottomInset(20);
         info.setAxis(Direction.toNextLine);
         info.setConstraints(GridBagConstraints.BOTH, 1, 1, 1);
-        info.insertItem(FrameItems.label("고정 시작 내용", SwingConstants.RIGHT));
+        info.insertItem(FrameItems.label(Strings.prefixHeaderLabel, SwingConstants.RIGHT));
 
         info.setAxis(Direction.toRight);
         info.setConstraints(GridBagConstraints.BOTH, 2, 1, 8);
@@ -334,7 +331,7 @@ public class FileSettingFrame extends CustomFrame{
 
         info.setAxis(Direction.toNextLine);
         info.setConstraints(GridBagConstraints.BOTH, 1, 1, 1);
-        info.insertItem(FrameItems.label("고정 끝 내용", SwingConstants.RIGHT));
+        info.insertItem(FrameItems.label(Strings.prefixEndLabel, SwingConstants.RIGHT));
 
         info.setAxis(Direction.toRight);
         info.setConstraints(GridBagConstraints.BOTH, 2, 1, 8);
